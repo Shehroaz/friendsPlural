@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
@@ -13,10 +14,12 @@ public class Friend {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @NotBlank
     @JsonProperty("first-name")
     private String firstName;
 
     @JsonProperty("last-name")
+    @NotBlank
     private String lastName;
 
     @JsonIgnore

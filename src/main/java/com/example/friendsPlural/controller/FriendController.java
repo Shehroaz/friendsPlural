@@ -3,16 +3,22 @@ package com.example.friendsPlural.controller;
 import com.example.friendsPlural.model.Friend;
 import com.example.friendsPlural.service.FriendService;
 import com.example.friendsPlural.utils.ErrorMessage;
+import com.example.friendsPlural.utils.FieldErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.DelegatingServerHttpResponse;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.xml.bind.ValidationException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class FriendController {
@@ -20,11 +26,11 @@ public class FriendController {
     FriendService friendService;
 
     @PostMapping("/friend")
-    public Friend create(@RequestBody Friend friend) throws ValidationException {
-        if (friend.getId() != null && friend.getFirstName() != null && friend.getLastName() != null)
+    public Friend create(@Valid @RequestBody Friend friend) {
         return friendService.save(friend);
-        else throw new ValidationException("friends cannot be created");
     }
+
+
 
 //    @ExceptionHandler(ValidationException.class)
 //    public ResponseEntity<String> exceptionHandler (ValidationException e){
@@ -37,9 +43,6 @@ public class FriendController {
     @GetMapping("/friend")
     public Iterable<Friend> read(){
         return friendService.findAll();
-//        Iterable<Friend> iterable = friendService.findAll();
-//        iterable.forEach(friend -> System.out.println(friend.getFirstName() + " " + friend.getLastName()));
-//        return iterable;
     }
 
     @PutMapping("/friend")
