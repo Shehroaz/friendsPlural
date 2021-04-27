@@ -19,6 +19,14 @@ public class Address {
     @ManyToOne
     private Friend friend;
 
+    public Address(Integer id, String street, String city) {
+        this.id = id;
+        this.street = street;
+        this.city = city;
+    }
+
+    public Address() {
+    }
 
     public String getStreet() {
         return street;
