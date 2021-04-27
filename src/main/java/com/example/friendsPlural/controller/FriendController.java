@@ -2,10 +2,15 @@ package com.example.friendsPlural.controller;
 
 import com.example.friendsPlural.model.Friend;
 import com.example.friendsPlural.service.FriendService;
+import com.example.friendsPlural.utils.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.DelegatingServerHttpResponse;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.bind.ValidationException;
 import java.util.Iterator;
 import java.util.Optional;
 
@@ -15,9 +20,19 @@ public class FriendController {
     FriendService friendService;
 
     @PostMapping("/friend")
-    public Friend create(@RequestBody Friend friend){
+    public Friend create(@RequestBody Friend friend) throws ValidationException {
+        if (friend.getId() != null && friend.getFirstName() != null && friend.getLastName() != null)
         return friendService.save(friend);
+        else throw new ValidationException("friends cannot be created");
     }
+
+//    @ExceptionHandler(ValidationException.class)
+//    public ResponseEntity<String> exceptionHandler (ValidationException e){
+//        return new ResponseEntity(e.getMessage() , HttpStatus.BAD_REQUEST);
+//    }
+
+
+
 
     @GetMapping("/friend")
     public Iterable<Friend> read(){
@@ -28,8 +43,11 @@ public class FriendController {
     }
 
     @PutMapping("/friend")
-    public Friend update (@RequestBody Friend friend){
-        return friendService.save(friend);
+    public ResponseEntity<Friend> update (@RequestBody Friend friend){
+        if (friendService.findById(friend.getId()).isPresent())
+           return  new ResponseEntity(friendService.save(friend) , HttpStatus.OK);
+        else
+            return new ResponseEntity(friend , HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping("/friend/{id}")
